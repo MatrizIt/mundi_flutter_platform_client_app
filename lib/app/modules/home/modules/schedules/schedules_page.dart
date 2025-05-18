@@ -42,7 +42,7 @@ class _SchedulesPageState extends State<SchedulesPage> {
     final wazeUrl = 'waze://?ll=$latitude,$longitude&navigate=yes';
     final googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     final appleMapsUrl = 'http://maps.apple.com/?ll=$latitude,$longitude';
-    
+
     if (await canLaunchUrl(Uri.parse(wazeUrl))) {
       await launchUrl(
         Uri.parse(wazeUrl),
