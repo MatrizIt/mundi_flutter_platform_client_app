@@ -36,7 +36,7 @@ class ReserveCubit extends Cubit<ReserveState> {
         date: date
           );
 
-      emit(state.copyWith(status: ReserveStatus.success, checkHour: res));
+      emit(state.copyWith(status: ReserveStatus.loaded, checkHour: res));
     } catch (e){
       print("Error check $e");
     }

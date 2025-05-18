@@ -73,9 +73,9 @@ class _EntrepreneurTileState extends State<EntrepreneurTile> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(6),
-            child: fetchedImages.isNotEmpty
+            child: widget.entrepreneur.profileImage != null
                 ? Image.memory(
-              fetchedImages.first,
+              widget.entrepreneur.profileImage!,
               fit: BoxFit.cover,
             )
                 : Image.asset(

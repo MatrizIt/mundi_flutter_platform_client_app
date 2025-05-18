@@ -101,48 +101,21 @@ class _EntrepreneurPageState extends State<EntrepreneurPage>
                 Expanded(
                   child: Stack(
                     children: [
-                      PageView.builder(
-                        controller: _imagesViewCtrl,
-                        onPageChanged: (value) {
-                          setState(() {
-                            selectedImg = value;
-                          });
-                        },
-                        itemCount: fetchedImages.isEmpty ? 1 : fetchedImages.length,
-                        itemBuilder: (context, index) {
-                          if (fetchedImages.isEmpty) {
-                            return Container(child: Image.asset(
-                              'assets/images/barber.png',
-                              fit: BoxFit.cover,
-                            ),); // Renderize um marcador vazio
-                          } else {
-                            final image = fetchedImages[index];
-                            return Container(
-                              width: 4,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.5),
-                                    spreadRadius: 1,
-                                    blurRadius: 5,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                                color: index == selectedImg ? Colors.white : Colors.transparent,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 1,
-                                ),
-                              ),
-                              child: Image.memory(
-                                image,
-                                fit: BoxFit.cover,
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                    Container(
+                      width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: state.entrepreneur?.profileImage != null ? Image.memory(
+                      state.entrepreneur!.profileImage!,
+                      fit: BoxFit.cover,
+                    ) : Center(
+                      child: Image.asset(
+                                 'assets/images/dark_logo.png',
+                                 fit: BoxFit.cover,
+                               ),
+                    ),
+                  ),
                       Align(
                         alignment: Alignment.topLeft,
                         child: Container(
@@ -168,49 +141,6 @@ class _EntrepreneurPageState extends State<EntrepreneurPage>
                                 color: context.colors.decorationPrimary,
                               ),
                             ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 10),
-                          child: ListView.separated(
-                            shrinkWrap: true,
-                            separatorBuilder: (context, index) {
-                              return const SizedBox(
-                                width: 5,
-                              );
-                            },
-                            itemCount: fetchedImages.isEmpty ? 1 : fetchedImages.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                width: 4,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.5),
-                                      spreadRadius: 1,
-                                      blurRadius: 5,
-                                      offset: const Offset(
-                                        0,
-                                        3,
-                                      ), // changes position of shadow
-                                    ),
-                                  ],
-                                  color: index == selectedImg
-                                      ? Colors.white
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 1,
-                                  ),
-                                ),
-                              );
-                            },
                           ),
                         ),
                       ),
