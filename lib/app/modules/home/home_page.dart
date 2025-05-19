@@ -63,7 +63,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavBar(
         currentIndex: _currentPage,
         onChangePage: (index) async {
-          if (index == 3) {
+          final isAuthenticatedPage = [2, 3].contains(index);
+          if (isAuthenticatedPage) {
             final LocalStorage localStorage = Modular.get<LocalStorage>();
             final String? token = await localStorage.read('accessToken');
             print("Tem token ${token}");
@@ -147,7 +148,7 @@ class _PageState extends State<Page> {
       children: [
         Container(
           width: 1.sw,
-          height: .22.sh - 1.statusBar,
+          height: .24.sh - 1.statusBar,
           color: const Color(0xFF060E31),
           padding: EdgeInsets.only(top: 1.statusBar + 10),
           child: Column(

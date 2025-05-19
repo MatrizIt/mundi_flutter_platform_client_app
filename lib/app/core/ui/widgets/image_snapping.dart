@@ -46,7 +46,7 @@ class _ImageSnappingState extends State<ImageSnapping> {
               )
                   : Image.asset(
                 'assets/images/barber.png',
-
+                fit: BoxFit.cover,
               );
             },
           ),

@@ -61,8 +61,10 @@ class _ReservePageState extends State<ReservePage> with Messages<ReservePage> {
       listener: (context, state) {
         state.status.matchAny(
             any: () {},
-            success: () async{
+            loaded: () {
               availablesTimes = state.checkHour!;
+            },
+            success: () async{
               final [hour, minute] = selectedTime.getHourAndMinuteFromAppTimeFormat;
               await ReserveModal.show(
                 context,
@@ -152,7 +154,7 @@ class _ReservePageState extends State<ReservePage> with Messages<ReservePage> {
                       controller: _dateController,
                       minDate: DateTime.now(),
                       onSelectionChanged: (args) {
-                        _loadAvailableTimes(args.value); // Chama o método para carregar horários disponíveis
+                        _loadAvailableTimes(args.value);
                       },
                     ),
                     const SizedBox(

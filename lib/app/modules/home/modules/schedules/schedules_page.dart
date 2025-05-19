@@ -40,22 +40,31 @@ class _SchedulesPageState extends State<SchedulesPage> {
 
   void abrirWazeOuMaps(double latitude, double longitude) async {
     final wazeUrl = 'waze://?ll=$latitude,$longitude&navigate=yes';
-    final googleMapsUrl =
-        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+    final googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
     final appleMapsUrl = 'http://maps.apple.com/?ll=$latitude,$longitude';
 
-    canLaunchUrl(Uri(host: wazeUrl)).then((bool result) async{
-      await launchUrl(Uri(host: wazeUrl),mode: LaunchMode.externalNonBrowserApplication,);
-    });
+    if (await canLaunchUrl(Uri.parse(wazeUrl))) {
+      await launchUrl(
+        Uri.parse(wazeUrl),
+        mode: LaunchMode.externalApplication,
+      );
+      return;
+    }
 
-    canLaunchUrl(Uri(host: googleMapsUrl)).then((bool result) async{
-      await launchUrl(Uri(host: googleMapsUrl),mode: LaunchMode.externalNonBrowserApplication,);
-    });
+    if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
+      await launchUrl(
+        Uri.parse(googleMapsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+      return;
+    }
 
-    canLaunchUrl(Uri(host: appleMapsUrl)).then((bool result) async{
-      await launchUrl(Uri(host: appleMapsUrl),mode: LaunchMode.externalNonBrowserApplication,);
-    });
-
+    if (await canLaunchUrl(Uri.parse(appleMapsUrl))) {
+      await launchUrl(
+        Uri.parse(appleMapsUrl),
+        mode: LaunchMode.externalApplication,
+      );
+    }
   }
 
   Future<void> checkSchedulesToFeedback(List<Schedule> schedules) async {
@@ -99,6 +108,12 @@ class _SchedulesPageState extends State<SchedulesPage> {
     print("Aq ${decodedToken}");
 
     return decodedToken;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ScheduleCubit>().loadSchedule();
   }
 
   @override
@@ -171,83 +186,92 @@ class _SchedulesPageState extends State<SchedulesPage> {
                     height: 25,
                   ),
                   const FilterWidget(),
-                  if (sortedSchedules.isNotEmpty)
-                    Expanded(
-                      child: ListView.separated(
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: 10),
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: sortedSchedules.length,
-                        itemBuilder: (context, index) {
-                          DateTime scheduledDate = DateTime.parse(
-                              sortedSchedules[index].scheduledDate);
+                  const SizedBox(
+                    height: 15,
+                  ),
 
-                          final currentDate = DateTime.now();
-                          final currentDateWithoutTime = DateTime(
-                              currentDate.year,
-                              currentDate.month,
-                              currentDate.day);
-                          final scheduledDateWithoutTime = DateTime(
-                              scheduledDate.year,
-                              scheduledDate.month,
-                              scheduledDate.day);
+                    Visibility(
+                      visible: sortedSchedules.isNotEmpty,
+                      replacement: const Center(
+                        child: Text('Nenhum agendamento encontrado'),
+                      ),
+                      child: Expanded(
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) =>
+                              const SizedBox(height: 10),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: sortedSchedules.length,
+                          itemBuilder: (context, index) {
+                            DateTime scheduledDate = DateTime.parse(
+                                sortedSchedules[index].scheduledDate);
 
-                          if (!scheduledDateWithoutTime
-                              .isBefore(currentDateWithoutTime)) {
-                            return Column(
-                              children: [
-                                ReserveTile(
-                                  modality: sortedSchedules[index].modality,
-                                  selectedDate: scheduledDate,
-                                  selectedTime: scheduledDate.appTimeFormat,
-                                ),
-                                const SizedBox(height: 7),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SchedulesOutlineButton(
-                                      onPressed: () {
-                                        MoreInfoModal.show(
-                                          context,
-                                          Reservation(
-                                            entrepreneurId:
-                                                sortedSchedules[index]
-                                                    .entrepreneurEntrepreneurId,
-                                            userId: sortedSchedules[index]
-                                                .userUserId,
-                                            modality:
-                                                sortedSchedules[index].modality,
-                                            startAt: DateTime.parse(
-                                                sortedSchedules[index]
-                                                    .scheduledDate),
-                                            entrepreneurPhone:
-                                                sortedSchedules[index]
-                                                    .entrepreneurPhone,
-                                            scheduleId:
-                                                sortedSchedules[index].id,
-                                          ),
-                                        );
-                                      },
-                                      label: 'Mais informações',
-                                    ),
-                                    SchedulesOutlineButton(
-                                      onPressed: () {
-                                        _getCoordinatesFromAddress(
-                                            sortedSchedules[index].cep);
-                                      },
-                                      label: 'Como chegar',
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 30),
-                              ],
-                            );
-                          } else {
-                            return const Row();
-                          }
-                        },
+                            final currentDate = DateTime.now();
+                            final currentDateWithoutTime = DateTime(
+                                currentDate.year,
+                                currentDate.month,
+                                currentDate.day);
+                            final scheduledDateWithoutTime = DateTime(
+                                scheduledDate.year,
+                                scheduledDate.month,
+                                scheduledDate.day);
+
+                            if (!scheduledDateWithoutTime
+                                .isBefore(currentDateWithoutTime)) {
+                              return Column(
+                                children: [
+                                  ReserveTile(
+                                    modality: sortedSchedules[index].modality,
+                                    selectedDate: scheduledDate,
+                                    selectedTime: scheduledDate.appTimeFormat,
+                                  ),
+                                  const SizedBox(height: 7),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SchedulesOutlineButton(
+                                        onPressed: () {
+                                          MoreInfoModal.show(
+                                            context,
+                                            Reservation(
+                                              entrepreneurId:
+                                                  sortedSchedules[index]
+                                                      .entrepreneurEntrepreneurId,
+                                              userId: sortedSchedules[index]
+                                                  .userUserId,
+                                              modality:
+                                                  sortedSchedules[index].modality,
+                                              startAt: DateTime.parse(
+                                                  sortedSchedules[index]
+                                                      .scheduledDate),
+                                              entrepreneurPhone:
+                                                  sortedSchedules[index]
+                                                      .entrepreneurPhone,
+                                              scheduleId:
+                                                  sortedSchedules[index].id,
+                                            ),
+                                          );
+                                        },
+                                        label: 'Mais informações',
+                                      ),
+                                      SchedulesOutlineButton(
+                                        onPressed: () {
+                                          _getCoordinatesFromAddress(
+                                              sortedSchedules[index].cep);
+                                        },
+                                        label: 'Como chegar',
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 30),
+                                ],
+                              );
+                            } else {
+                              return const Row();
+                            }
+                          },
+                        ),
                       ),
                     ),
                 ],
