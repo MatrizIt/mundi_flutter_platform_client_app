@@ -22,6 +22,7 @@ class Entrepreneur {
   List<Rating>? ratings;
   final double? distance;
   final Uint8List? profileImage;
+  final List<int>? imagesID;
   //final String category;
 
 
@@ -43,6 +44,7 @@ class Entrepreneur {
     this.ratings,
     this.distance,
     this.profileImage,
+    this.imagesID,
     //required this.category
   });
 
@@ -93,6 +95,7 @@ class Entrepreneur {
           : null,
       distance: double.parse(map['distance'] ?? "0.0"),
        profileImage: (map['profileImage'] as String?)?.bytesFromBase64,
+       imagesID: ((map['images'] as List?) ?? []).map((item) => item as int).toList(),
        // category: map['category']
       //category: map['category'].map<Category>((x) => Category.fromMap(x)).toList()
     );

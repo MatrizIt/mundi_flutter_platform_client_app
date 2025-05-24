@@ -7,12 +7,12 @@ import 'package:mundi_flutter_platform_client_app/app/core/ui/widgets/image_snap
 import '../../../../../../models/work.dart';
 
 class PortfolioPage extends StatefulWidget {
-  final List<Uint8List> fetchedImages;
+  final List<int> images;
   final List<Work> services;
   const PortfolioPage({
     super.key,
     required this.services,
-    required this.fetchedImages
+    required this.images
   });
 
   @override
@@ -27,7 +27,7 @@ class _PortfolioPageState extends State<PortfolioPage> {
         const SizedBox(
           height: 20,
         ),
-        Expanded(child: ImageSnapping(fetchedImages: widget.fetchedImages,)),
+        Expanded(child: ImageSnapping(fetchedImages: widget.images,)),
       ],
     );
   }

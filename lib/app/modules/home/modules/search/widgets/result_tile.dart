@@ -12,10 +12,7 @@ import '../../../../../models/entrepreneur.dart';
 import 'package:http/http.dart' as http;
 
 class ResultTile extends StatefulWidget {
-  const ResultTile({
-    super.key,
-    required this.entrepreneur,
-  });
+  const ResultTile({super.key, required this.entrepreneur});
 
   final Entrepreneur entrepreneur;
 
@@ -24,50 +21,15 @@ class ResultTile extends StatefulWidget {
 }
 
 class _ResultTileState extends State<ResultTile> {
-  List<Uint8List> fetchedImages = [];
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    fetchImagesByEntrepreneurId(widget.entrepreneur.id);
-  }
-
-  Future<void> fetchImagesByEntrepreneurId(int entrepreneurId) async {
-    const String baseUrl = 'https://api.mundiapp.com.br';
-    final String url = '$baseUrl/images/byEntrepreneur/$entrepreneurId';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final decodedResponse = jsonDecode(response.body);
-
-        final List<Uint8List> images = (decodedResponse as List).map((item) {
-          final base64String = item['base64'] as String;
-          final base64Clean = base64String.split(',').last;
-          return base64Decode(base64Clean);
-        }).toList();
-
-        setState(() {
-          fetchedImages = images;
-        });
-      } else {
-        print('Erro ao buscar imagens: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Erro ao conectar ao servidor: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ImageSnapping.favorite(fetchedImages: fetchedImages,),
-        const SizedBox(
-          height: 10,
+        ImageSnapping.favorite(
+          fetchedImages: widget.entrepreneur.imagesID ?? [],
         ),
+        const SizedBox(height: 10),
         Text(
           widget.entrepreneur.name,
           style: context.textStyles.textMedium.copyWith(
@@ -75,17 +37,21 @@ class _ResultTileState extends State<ResultTile> {
             color: const Color.fromRGBO(33, 33, 33, 1),
           ),
         ),
-        const SizedBox(
-          height: 10,
-        ),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.entrepreneur.fullAddress,
-              style: context.textStyles.textRegular.copyWith(
-                fontSize: 10,
-                color: const Color.fromRGBO(164, 164, 164, 1),
+            Expanded(
+              child: Text(
+                widget.entrepreneur.fullAddress,
+                maxLines: 4,
+                textAlign: TextAlign.left,
+                style: context.textStyles.textRegular.copyWith(
+                  fontSize: 10,
+                  color: const Color.fromRGBO(164, 164, 164, 1),
+                ),
               ),
             ),
             Row(
@@ -95,23 +61,19 @@ class _ResultTileState extends State<ResultTile> {
                   size: 8,
                   color: context.colors.decorationPrimary,
                 ),
-                const SizedBox(
-                  width: 5,
-                ),
+                const SizedBox(width: 5),
                 Text(
                   '0',
                   style: context.textStyles.textMedium.copyWith(
                     color: context.colors.decorationPrimary,
                     fontSize: 14,
                   ),
-                )
+                ),
               ],
             ),
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
+        const SizedBox(height: 20),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -123,10 +85,11 @@ class _ResultTileState extends State<ResultTile> {
               ),
             ),
             GestureDetector(
-              onTap: () => Modular.to.pushNamed(
-                '/home/entrepreneur/',
-                arguments: widget.entrepreneur.id,
-              ),
+              onTap:
+                  () => Modular.to.pushNamed(
+                    '/home/entrepreneur/',
+                    arguments: widget.entrepreneur.id,
+                  ),
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -135,19 +98,22 @@ class _ResultTileState extends State<ResultTile> {
                   ),
                   borderRadius: BorderRadius.circular(24),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Text(
                   "Agende Aqui",
                   style: GoogleFonts.inter(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: const Color.fromRGBO(33, 33, 33, 1)),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: const Color.fromRGBO(33, 33, 33, 1),
+                  ),
                 ),
               ),
             ),
           ],
-        )
+        ),
       ],
     );
   }
